@@ -26,7 +26,7 @@ public class TravellingOfDay {
     private SelenideElement cvcError = $(byText("CVC/CVV")).parent().$(".input__sub");
     private SelenideElement continueButton = $$("button").find(exactText("Продолжить"));
     private SelenideElement notificationOk = $(byText("Успешно")).parent().$(".notification__title");
-    private SelenideElement notificationError = $(".notification_status_error");
+    private SelenideElement notificationError = $(byText("Ошибка")).parent().$(".notification__title");
 
     public TravellingOfDay() {
         heading.shouldBe(visible);

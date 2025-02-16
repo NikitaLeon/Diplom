@@ -254,6 +254,69 @@ public class TravellingOfDayTest {
         }
 
         @Test
+        @DisplayName("Отправка пустой формы для кредита")
+        public void emptyForm() {
+            var travellingOfDay = new TravellingOfDay();
+            travellingOfDay.emptyForm();
+        }
+
+        @Test
+        @DisplayName("Отправка формы с пустым полем 'Номер карты' для кредита")
+        public void emptyFieldNumberCard() {
+            var travellingOfDay = new TravellingOfDay();
+            var info = getApprovedCard();
+            travellingOfDay.emptyCardNumber(info);
+        }
+
+        @Test
+        @DisplayName("Отправка формы с неполным номером карты для кредита")
+        public void incompleteNumber() {
+            var travellingOfDay = new TravellingOfDay();
+            var info = getCardWithIncompleteNumber();
+            travellingOfDay.invalidCardNumber(info);
+        }
+
+        @Test
+        @DisplayName("Отправка формы с пустым полем 'Месяц' для кредита")
+        public void emptyFieldMonth() {
+            var travellingOfDay = new TravellingOfDay();
+            var info = getApprovedCard();
+            travellingOfDay.emptyMonth(info);
+        }
+
+        @Test
+        @DisplayName("Отправка формы с просроченным месяцем для кредита")
+        public void overdueMonth() {
+            var travellingOfDay = new TravellingOfDay();
+            var info = getCardWithOverdueMonth();
+            travellingOfDay.invalidMonth(info);
+        }
+
+        @Test
+        @DisplayName("Отправка формы с полем 'Месяц' со значением ниже граничного для кредита")
+        public void lessMonth() {
+            var travellingOfDay = new TravellingOfDay();
+            var info = getCardWithLessMonth();
+            travellingOfDay.invalidMonth(info);
+        }
+
+        @Test
+        @DisplayName("Отправка формы с полем 'Месяц' со значением выше граничного для кредита")
+        public void moreMonth() {
+            var travellingOfDay = new TravellingOfDay();
+            var info = getCardWithMoreMonth();
+            travellingOfDay.invalidMonth(info);
+        }
+
+        @Test
+        @DisplayName("Отправка формы с пустым полем 'Год' для кредита")
+        public void emptyFieldYear() {
+            var travellingOfDay = new TravellingOfDay();
+            var info = getApprovedCard();
+            travellingOfDay.emptyYear(info);
+        }
+
+        @Test
         @DisplayName("Отправка формы с просроченным годом для кредита")
         public void overdueYear() {
             var travellingOfDay = new TravellingOfDay();
