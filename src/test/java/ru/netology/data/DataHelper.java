@@ -10,6 +10,11 @@ import java.util.Random;
 public class DataHelper {
     private static final String validCard = "4444 4444 4444 4441";
     private static final String invalidCard = "4444 4444 4444 4442";
+    private static final String emptyCardNumber = "";
+    private static final String emptyMonth = "";
+    private static final String emptyYear = "";
+    private static final String emptyOwner = "";
+    private static final String emptyCVC = "";
     private static final String space = " ";
     private static final String[] simbols = new String[] {".", ",", "/", "!", "'", ";", ":", "!", "@", "#", "$", "%"};
     private static final String[] numbers = new String[] {"0", "1", "2", "3", "4", "5", "6", "7", "8", "9"};
@@ -82,6 +87,30 @@ public class DataHelper {
 
     public static CardInfo getDeclined() {
         return new CardInfo(invalidCard, getValidMonth(), getValidYear(), getOwner(), getCVC());
+    }
+
+    public static CardInfo getEmptyForm() {
+        return new CardInfo(emptyCardNumber, emptyMonth, emptyYear, emptyOwner, emptyCVC);
+    }
+
+    public static CardInfo getWithEmptyCardNumber() {
+        return new CardInfo(emptyCardNumber, getValidMonth(), getValidYear(), getOwner(), getCVC());
+    }
+
+    public static CardInfo getWithEmptyMonth() {
+        return new CardInfo(validCard, emptyMonth, getValidYear(), getOwner(), getCVC());
+    }
+
+    public static CardInfo getWithEmptyYear() {
+        return new CardInfo(validCard, getValidMonth(), emptyYear, getOwner(), getCVC());
+    }
+
+    public static CardInfo getWithEmptyOwner() {
+        return new CardInfo(validCard, getValidMonth(), getValidYear(), emptyOwner, getCVC());
+    }
+
+    public static CardInfo getWithEmptyCVC() {
+        return new CardInfo(validCard, getValidMonth(), getValidYear(), getOwner(), emptyCVC);
     }
 
     public static CardInfo getCardWithIncompleteNumber() {

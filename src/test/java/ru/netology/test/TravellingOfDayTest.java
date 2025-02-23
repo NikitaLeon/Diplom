@@ -25,47 +25,47 @@ public class TravellingOfDayTest {
         open("http://localhost:8080");
     }
 
+    @AfterEach
+    void cleanBase() {
+        cleanDatabase();
+    }
+
     @AfterAll
     static void tearDownAll() {
         SelenideLogger.removeListener("allure");
-        cleanDatabase();
     }
 
     @Nested
     public class ValidCard {
 
         @Test
-        @SneakyThrows
         @DisplayName("Оплата по карте с валидными данными")
         public void paymentValidCard() {
             var travellingOfDay = new TravellingOfDay();
             travellingOfDay.cardPayment();
             var info = getApprovedCard();
             travellingOfDay.sendingDate(info);
-            TimeUnit.SECONDS.sleep(10);
+            travellingOfDay.bankApproved();
             var expected = "APPROVED";
             var payment = getPayment();
             var order = getOrder();
             assertEquals(expected, payment.getStatus());
             assertEquals(payment.getTransaction_id(), order.getPayment_id());
-            travellingOfDay.bankApproved();
         }
 
         @Test
-        @SneakyThrows
         @DisplayName("Получение кредита по карте с валидными данными")
         public void creditValidCard() {
             var travellingOfDay = new TravellingOfDay();
             travellingOfDay.cardCredit();
             var info = getApprovedCard();
             travellingOfDay.sendingDate(info);
-            TimeUnit.SECONDS.sleep(10);
+            travellingOfDay.bankApproved();
             var expected = "APPROVED";
             var credit = getCreditRequest();
             var order = getOrder();
             assertEquals(expected, credit.getStatus());
             assertEquals(credit.getBank_id(), order.getCredit_id());
-            travellingOfDay.bankApproved();
         }
     }
 
@@ -80,13 +80,12 @@ public class TravellingOfDayTest {
         travellingOfDay.cardPayment();
         var info = getDeclined();
         travellingOfDay.sendingDate(info);
-        TimeUnit.SECONDS.sleep(10);
+        travellingOfDay.bankDeclined();
         var expected = "DECLINED";
         var payment = getPayment();
         var order = getOrder();
         assertEquals(expected, payment.getStatus());
         assertEquals(payment.getTransaction_id(), order.getPayment_id());
-        travellingOfDay.bankDeclined();
     }
 
     @Test
@@ -97,13 +96,12 @@ public class TravellingOfDayTest {
         travellingOfDay.cardCredit();
         var info = getDeclined();
         travellingOfDay.sendingDate(info);
-        TimeUnit.SECONDS.sleep(10);
+        travellingOfDay.bankDeclined();
         var expected = "DECLINED";
         var credit = getCreditRequest();
         var order = getOrder();
         assertEquals(expected, credit.getStatus());
         assertEquals(credit.getBank_id(), order.getCredit_id());
-        travellingOfDay.bankDeclined();
     }
 }
 
@@ -120,15 +118,18 @@ public class TravellingOfDayTest {
         @DisplayName("Отправка пустой формы на оплату")
         public void emptyForm() {
             var travellingOfDay = new TravellingOfDay();
-            travellingOfDay.emptyForm();
+            var info = getEmptyForm();
+            travellingOfDay.sendingDate(info);
+            travellingOfDay.inputInvalidFields();
         }
 
         @Test
         @DisplayName("Отправка формы с пустым полем 'Номер карты' на оплату")
         public void emptyFieldNumberCard() {
             var travellingOfDay = new TravellingOfDay();
-            var info = getApprovedCard();
-            travellingOfDay.emptyCardNumber(info);
+            var info = getWithEmptyCardNumber();
+            travellingOfDay.sendingDate(info);
+            travellingOfDay.inputInvalidCardNumber();
         }
 
         @Test
@@ -136,15 +137,17 @@ public class TravellingOfDayTest {
         public void incompleteNumber() {
             var travellingOfDay = new TravellingOfDay();
             var info = getCardWithIncompleteNumber();
-            travellingOfDay.invalidCardNumber(info);
+            travellingOfDay.sendingDate(info);
+            travellingOfDay.inputInvalidCardNumber();
         }
 
         @Test
         @DisplayName("Отправка формы с пустым полем 'Месяц' на оплату")
         public void emptyFieldMonth() {
             var travellingOfDay = new TravellingOfDay();
-            var info = getApprovedCard();
-            travellingOfDay.emptyMonth(info);
+            var info = getWithEmptyMonth();
+            travellingOfDay.sendingDate(info);
+            travellingOfDay.inputInvalidMonth();
         }
 
         @Test
@@ -152,7 +155,8 @@ public class TravellingOfDayTest {
         public void overdueMonth() {
             var travellingOfDay = new TravellingOfDay();
             var info = getCardWithOverdueMonth();
-            travellingOfDay.invalidMonth(info);
+            travellingOfDay.sendingDate(info);
+            travellingOfDay.inputInvalidMonth();
         }
 
         @Test
@@ -160,7 +164,8 @@ public class TravellingOfDayTest {
         public void lessMonth() {
             var travellingOfDay = new TravellingOfDay();
             var info = getCardWithLessMonth();
-            travellingOfDay.invalidMonth(info);
+            travellingOfDay.sendingDate(info);
+            travellingOfDay.inputInvalidMonth();
         }
 
         @Test
@@ -168,15 +173,17 @@ public class TravellingOfDayTest {
         public void moreMonth() {
             var travellingOfDay = new TravellingOfDay();
             var info = getCardWithMoreMonth();
-            travellingOfDay.invalidMonth(info);
+            travellingOfDay.sendingDate(info);
+            travellingOfDay.inputInvalidMonth();
         }
 
         @Test
         @DisplayName("Отправка формы с пустым полем 'Год' на оплату")
         public void emptyFieldYear() {
             var travellingOfDay = new TravellingOfDay();
-            var info = getApprovedCard();
-            travellingOfDay.emptyYear(info);
+            var info = getWithEmptyYear();
+            travellingOfDay.sendingDate(info);
+            travellingOfDay.inputInvalidYear();
         }
 
         @Test
@@ -184,7 +191,8 @@ public class TravellingOfDayTest {
         public void overdueYear() {
             var travellingOfDay = new TravellingOfDay();
             var info = getCardWithOverdueYear();
-            travellingOfDay.invalidYear(info);
+            travellingOfDay.sendingDate(info);
+            travellingOfDay.inputInvalidYear();
         }
 
         @Test
@@ -192,15 +200,17 @@ public class TravellingOfDayTest {
         public void futureYear() {
             var travellingOfDay = new TravellingOfDay();
             var info = getCardWithYearOfFuture();
-            travellingOfDay.invalidYear(info);
+            travellingOfDay.sendingDate(info);
+            travellingOfDay.inputInvalidYear();
         }
 
         @Test
         @DisplayName("Отправка формы с пустым полем 'Владелец' на оплату")
         public void emptyFieldOwner() {
             var travellingOfDay = new TravellingOfDay();
-            var info = getApprovedCard();
-            travellingOfDay.emptyOwner(info);
+            var info = getWithEmptyOwner();
+            travellingOfDay.sendingDate(info);
+            travellingOfDay.inputInvalidOwner();
         }
 
         @Test
@@ -208,7 +218,8 @@ public class TravellingOfDayTest {
         public void ownerWithSpace() {
             var travellingOfDay = new TravellingOfDay();
             var info = getCardWithSpaceInFieldOwner();
-            travellingOfDay.invalidOwner(info);
+            travellingOfDay.sendingDate(info);
+            travellingOfDay.inputInvalidOwner();
         }
 
         @Test
@@ -216,7 +227,8 @@ public class TravellingOfDayTest {
         public void ownerWithSymbols() {
             var travellingOfDay = new TravellingOfDay();
             var info = getCardWithSimbolsInFieldOwner();
-            travellingOfDay.invalidOwner(info);
+            travellingOfDay.sendingDate(info);
+            travellingOfDay.inputInvalidOwner();
         }
 
         @Test
@@ -224,15 +236,17 @@ public class TravellingOfDayTest {
         public void ownerWithNumber() {
             var travellingOfDay = new TravellingOfDay();
             var info = getCardWithNumberInFieldOwner();
-            travellingOfDay.invalidOwner(info);
+            travellingOfDay.sendingDate(info);
+            travellingOfDay.inputInvalidOwner();
         }
 
         @Test
         @DisplayName("Отправка формы с пустым полем 'CVC/CVV' на оплату")
         public void emptyFieldCVC() {
             var travellingOfDay = new TravellingOfDay();
-            var info = getApprovedCard();
-            travellingOfDay.emptyCVC(info);
+            var info = getWithEmptyCVC();
+            travellingOfDay.sendingDate(info);
+            travellingOfDay.inputInvalidCVC();
         }
 
         @Test
@@ -240,7 +254,8 @@ public class TravellingOfDayTest {
         public void incompleteCVC() {
             var travellingOfDay = new TravellingOfDay();
             var info = getCardWithIncompleteCVC();
-            travellingOfDay.invalidCVC(info);
+            travellingOfDay.sendingDate(info);
+            travellingOfDay.inputInvalidCVC();
         }
     }
 
@@ -257,15 +272,18 @@ public class TravellingOfDayTest {
         @DisplayName("Отправка пустой формы для кредита")
         public void emptyForm() {
             var travellingOfDay = new TravellingOfDay();
-            travellingOfDay.emptyForm();
+            var info = getEmptyForm();
+            travellingOfDay.sendingDate(info);
+            travellingOfDay.inputInvalidFields();
         }
 
         @Test
         @DisplayName("Отправка формы с пустым полем 'Номер карты' для кредита")
         public void emptyFieldNumberCard() {
             var travellingOfDay = new TravellingOfDay();
-            var info = getApprovedCard();
-            travellingOfDay.emptyCardNumber(info);
+            var info = getWithEmptyCardNumber();
+            travellingOfDay.sendingDate(info);
+            travellingOfDay.inputInvalidCardNumber();
         }
 
         @Test
@@ -273,15 +291,17 @@ public class TravellingOfDayTest {
         public void incompleteNumber() {
             var travellingOfDay = new TravellingOfDay();
             var info = getCardWithIncompleteNumber();
-            travellingOfDay.invalidCardNumber(info);
+            travellingOfDay.sendingDate(info);
+            travellingOfDay.inputInvalidCardNumber();
         }
 
         @Test
         @DisplayName("Отправка формы с пустым полем 'Месяц' для кредита")
         public void emptyFieldMonth() {
             var travellingOfDay = new TravellingOfDay();
-            var info = getApprovedCard();
-            travellingOfDay.emptyMonth(info);
+            var info = getWithEmptyMonth();
+            travellingOfDay.sendingDate(info);
+            travellingOfDay.inputInvalidMonth();
         }
 
         @Test
@@ -289,7 +309,8 @@ public class TravellingOfDayTest {
         public void overdueMonth() {
             var travellingOfDay = new TravellingOfDay();
             var info = getCardWithOverdueMonth();
-            travellingOfDay.invalidMonth(info);
+            travellingOfDay.sendingDate(info);
+            travellingOfDay.inputInvalidMonth();
         }
 
         @Test
@@ -297,7 +318,8 @@ public class TravellingOfDayTest {
         public void lessMonth() {
             var travellingOfDay = new TravellingOfDay();
             var info = getCardWithLessMonth();
-            travellingOfDay.invalidMonth(info);
+            travellingOfDay.sendingDate(info);
+            travellingOfDay.inputInvalidMonth();
         }
 
         @Test
@@ -305,15 +327,17 @@ public class TravellingOfDayTest {
         public void moreMonth() {
             var travellingOfDay = new TravellingOfDay();
             var info = getCardWithMoreMonth();
-            travellingOfDay.invalidMonth(info);
+            travellingOfDay.sendingDate(info);
+            travellingOfDay.inputInvalidMonth();
         }
 
         @Test
         @DisplayName("Отправка формы с пустым полем 'Год' для кредита")
         public void emptyFieldYear() {
             var travellingOfDay = new TravellingOfDay();
-            var info = getApprovedCard();
-            travellingOfDay.emptyYear(info);
+            var info = getWithEmptyYear();
+            travellingOfDay.sendingDate(info);
+            travellingOfDay.inputInvalidYear();
         }
 
         @Test
@@ -321,7 +345,8 @@ public class TravellingOfDayTest {
         public void overdueYear() {
             var travellingOfDay = new TravellingOfDay();
             var info = getCardWithOverdueYear();
-            travellingOfDay.invalidYear(info);
+            travellingOfDay.sendingDate(info);
+            travellingOfDay.inputInvalidYear();
         }
 
         @Test
@@ -329,15 +354,17 @@ public class TravellingOfDayTest {
         public void futureYear() {
             var travellingOfDay = new TravellingOfDay();
             var info = getCardWithYearOfFuture();
-            travellingOfDay.invalidYear(info);
+            travellingOfDay.sendingDate(info);
+            travellingOfDay.inputInvalidYear();
         }
 
         @Test
         @DisplayName("Отправка формы с пустым полем 'Владелец' для кредита")
         public void emptyFieldOwner() {
             var travellingOfDay = new TravellingOfDay();
-            var info = getApprovedCard();
-            travellingOfDay.emptyOwner(info);
+            var info = getWithEmptyOwner();
+            travellingOfDay.sendingDate(info);
+            travellingOfDay.inputInvalidOwner();
         }
 
         @Test
@@ -345,7 +372,8 @@ public class TravellingOfDayTest {
         public void ownerWithSpace() {
             var travellingOfDay = new TravellingOfDay();
             var info = getCardWithSpaceInFieldOwner();
-            travellingOfDay.invalidOwner(info);
+            travellingOfDay.sendingDate(info);
+            travellingOfDay.inputInvalidOwner();
         }
 
         @Test
@@ -353,7 +381,8 @@ public class TravellingOfDayTest {
         public void ownerWithSymbols() {
             var travellingOfDay = new TravellingOfDay();
             var info = getCardWithSimbolsInFieldOwner();
-            travellingOfDay.invalidOwner(info);
+            travellingOfDay.sendingDate(info);
+            travellingOfDay.inputInvalidOwner();
         }
 
         @Test
@@ -361,15 +390,17 @@ public class TravellingOfDayTest {
         public void ownerWithNumber() {
             var travellingOfDay = new TravellingOfDay();
             var info = getCardWithNumberInFieldOwner();
-            travellingOfDay.invalidOwner(info);
+            travellingOfDay.sendingDate(info);
+            travellingOfDay.inputInvalidOwner();
         }
 
         @Test
         @DisplayName("Отправка формы с пустым полем 'CVC/CVV' для кредита")
         public void emptyFieldCVC() {
             var travellingOfDay = new TravellingOfDay();
-            var info = getApprovedCard();
-            travellingOfDay.emptyCVC(info);
+            var info = getWithEmptyCVC();
+            travellingOfDay.sendingDate(info);
+            travellingOfDay.inputInvalidCVC();
         }
 
         @Test
@@ -377,7 +408,8 @@ public class TravellingOfDayTest {
         public void incompleteCVC() {
             var travellingOfDay = new TravellingOfDay();
             var info = getCardWithIncompleteCVC();
-            travellingOfDay.invalidCVC(info);
+            travellingOfDay.sendingDate(info);
+            travellingOfDay.inputInvalidCVC();
         }
     }
 }
