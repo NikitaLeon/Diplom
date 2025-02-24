@@ -12,14 +12,13 @@
 * PostgreSQL.
 [Выявленные дефекты](https://github.com/NikitaLeon/Diplom/issues).
 ### Количество тест-кейсов: 36.
-### Успешные: 75%.
-### Неуспешные: 30%.
+### Успешные: 80.55%.
+### Неуспешные: 19.44%.
 ### Allure отчёт:
-![2025-02-16_14-27-58](https://github.com/user-attachments/assets/8d6924b3-74f2-4409-841e-1c4154007a9b)
-![2025-02-16_14-31-13](https://github.com/user-attachments/assets/56b646b7-83c8-4464-b928-9a53bd25d721)
-![2025-02-16_14-32-04](https://github.com/user-attachments/assets/be0c2635-e368-4e49-8ca0-32ff36af62e6)
-![2025-02-16_14-32-26](https://github.com/user-attachments/assets/49384b2c-a28c-4959-acf2-52953155d55f)
-![2025-02-16_14-33-09](https://github.com/user-attachments/assets/41d4ae8b-1982-460a-8ad3-8f596a054a60)
+![2025-02-24_16-56-17.png](..%2F..%2FDownloads%2F2025-02-24_16-56-17.png)
+![2025-02-24_16-56-06.png](..%2F..%2FDownloads%2F2025-02-24_16-56-06.png)
+![2025-02-24_16-55-44.png](..%2F..%2FDownloads%2F2025-02-24_16-55-44.png)
+![2025-02-24_16-55-28.png](..%2F..%2FDownloads%2F2025-02-24_16-55-28.png)
 ## Общие рекомендации:
 * Исправить выявленные дефекты.
 * Разработать более подробные требования и спецификацию для данного приложения.
